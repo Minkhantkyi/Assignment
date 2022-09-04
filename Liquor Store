@@ -1,0 +1,257 @@
+// Assignment3
+
+#include <iostream>
+#include <stdio.h>
+
+void show(int check);
+void ask();
+void service(int ser);
+void Income();
+void change(int* c, int value);
+void sell(int* s, int quantity);
+void refill(int* r, int quantity);
+void addTuborg(int tPrice, int tQuantity);
+void removeTuborg();
+
+int priceArr[5] = {150,120,180,80};
+int quantityArr[5] = {20,30,15,40};
+int opt = 0;
+int* pricePtr;
+int* quanPtr;
+int x = 0;
+int bill = 0;
+int sold = 0;
+
+int main()
+{
+    
+    int exit = 0;
+    int price = 0;
+    int quantity = 0;
+    int position = 0;
+
+    show(x);
+
+    while (exit < 1)
+    {
+
+        ask();
+
+        switch (opt) {
+
+            case 1:
+                std::cout << " Which one's price u wanna change?\n";
+                service(x);
+                std::cout << "\n";
+                std::cout << " Enter number : ";
+                std::cin >> position;
+                pricePtr = &priceArr[position - 1];
+                std::cout << " Enter the price : ";
+                std::cin >> price;
+                change(pricePtr, price);
+                std::cout << "\n";
+                show(x);
+                break;
+
+            case 2:
+                std::cout << " Choose from below.\n";
+                service(x);
+                std::cout << "\n";
+                std::cout << " Enter number : ";
+                std::cin >> position;
+                quanPtr = &quantityArr[position - 1];
+                sold = priceArr[position - 1];
+                if (*quanPtr == 0) {
+
+                    std::cout << "\n Sorry.. U have no instock!\n\n";
+          
+                }
+                else
+                {
+
+                    std::cout << " How many? : ";
+                    std::cin >> quantity;
+                    sell(quanPtr, quantity);
+                    bill += sold * quantity;
+                    std::cout << "\n";
+                    show(x);
+
+                }
+                break;
+
+            case 3:
+                std::cout << " Choose from below.\n";
+                service(x);
+                std::cout << "\n";
+                std::cout << " Enter number : ";
+                std::cin >> position;
+                quanPtr = &quantityArr[position - 1];
+                std::cout << " How many? : ";
+                std::cin >> quantity;
+                refill(quanPtr, quantity);
+                std::cout << "\n";
+                show(x);
+                break;
+
+            case 4:
+                int p;
+                std::cout << " Enter price : ";
+                std::cin >> p;
+                int q;
+                std::cout << " Enter quantity : ";
+                std::cin >> q;
+                addTuborg(p, q);
+                x++;
+                std::cout << "\n";
+                show(x);
+                break;
+            
+            case 5:
+                removeTuborg();
+                x--;
+                show(x);
+                break;
+
+            default:
+                std::cout << " Plz enter only given number!\n";
+                std::cout << "\n\n";
+                break;
+
+        }
+
+        Income();
+
+        std::cout << " Do u wanna exit? ( NO = 0 ; YES = others ): ";
+        std::cin >> exit;
+        std::cout << "\n";
+
+        if (exit != 0) {
+            std::cout << " Have a great day...";
+            std::cout << "\n";
+            exit++;
+        }
+
+    }
+
+    return 0;
+
+}
+
+void show(int check) {
+
+    if (check == 0) {
+
+        std::cout << "\n";
+        std::cout << "                Liquor Store           " << "\n";
+        std::cout << "\n";
+        std::cout << "            Heineken  Tiger  Corona  Chang " << "\n";
+        std::cout << "\n";
+
+        std::cout << " Price     ";
+        for (int i = 0; i < 4; i++) {
+            std::cout << "    " << priceArr[i] << " ";
+        }
+        std::cout << "\n\n";
+
+        std::cout << " Quantity  ";
+        for (int i = 0; i < 4; i++) {
+            std::cout << "    " << quantityArr[i] << "  ";
+        }
+        std::cout << "\n\n\n";
+
+    }
+    else {
+
+        std::cout << "\n";
+        std::cout << "                    Liquor Store           " << "\n";
+        std::cout << "\n";
+        std::cout << "            Heineken  Tiger  Corona  Chang  Tuborg " << "\n";
+        std::cout << "\n";
+
+        std::cout << " Price     ";
+        for (int i = 0; i < 5; i++) {
+            std::cout << "    " << priceArr[i] << " ";
+        }
+        std::cout << "\n\n";
+
+        std::cout << " Quantity  ";
+        for (int i = 0; i < 5; i++) {
+            std::cout << "    " << quantityArr[i] << "  ";
+        }
+        std::cout << "\n\n\n";
+
+    }
+
+}
+
+void ask() {
+
+    std::cout << "            Management            " << "\n\n";
+    std::cout << " Change Value  (1) " << "\n";
+    std::cout << " Sell Beer     (2) " << "\n";
+    std::cout << " Refill Beer   (3) " << "\n";
+    std::cout << " Add Tuborg    (4) " << "\n";
+    std::cout << " Remove Tuborg (5) " << "\n";
+    std::cout << " Which one do u want to manage? : ";
+    std::cin >> opt;
+    std::cout << "\n";
+
+}
+
+void service(int ser) {
+
+    if (ser == 0) {
+
+        std::cout << " Heineken (1), Tiger (2), Corona (3), Chang (4) ";
+    
+    }
+    else {
+
+        std::cout << " Heineken (1), Tiger (2), Corona (3), Chang (4), Tuborg (5) ";
+
+    }
+
+}
+
+void change(int* c, int value ) {
+
+    *c = value;
+
+}
+
+void sell(int* s, int quantity) {
+
+    *s = *s - quantity;
+
+}
+
+void refill(int* r, int quantity) {
+
+    *r = *r + quantity;
+
+}
+
+void addTuborg(int tPrice, int tQuantity) {
+
+    pricePtr = &priceArr[4];
+    *pricePtr = tPrice;
+    quanPtr = &quantityArr[4];
+    *quanPtr = tQuantity;
+
+}
+
+void removeTuborg() {
+
+    pricePtr = &priceArr[4];
+    *pricePtr = 0;
+    quanPtr = &quantityArr[4];
+    *quanPtr = 0;
+
+}
+
+
+void Income() {
+
+    std::cout << " Income : " << bill << "\n\n\n";
+
+}
