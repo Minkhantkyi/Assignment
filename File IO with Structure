@@ -1,4 +1,10 @@
-//File IO with Structure 
+
+// Two differecnt ways are used in handling File IO, using structure and without using structure
+
+// The way without using structure is used in functions of insert, open and delete.
+
+//The way using structure is used in function of updating.
+
 
 #include <iostream>
 #include <fstream>
@@ -55,17 +61,17 @@ int main()
 
     short int opt, exit = 0, check = 0;
 
-    std::cout << " Select 1,2,3 or 4.\n";
-    std::cout << " 1) Insert info.\n";
-    std::cout << " 2) Open Info.\n";
-    std::cout << " 3) Update Info.\n";
-    std::cout << " 4) Delete Info.\n";
+    cout << " Select 1,2,3 or 4.\n";
+    cout << " 1) Insert info.\n";
+    cout << " 2) Open Info.\n";
+    cout << " 3) Update Info.\n";
+    cout << " 4) Delete Info.\n";
 
     //Ask function and call function
     while (exit < 1) {
 
-        std::cout << " > ";
-        std::cin >> opt;
+        cout << " > ";
+        cin >> opt;
 
         switch (opt) {
 
@@ -74,33 +80,33 @@ int main()
             break;
 
         case 2:
-            std::cout << "\n";
+            cout << "\n";
             showInfo();
             break;
 
         case 3:
-            std::cout << "\n";
+            cout << "\n";
             updateInfo(tLines);
             break;
 
         case 4:
-            std::cout << "\n";
+            cout << "\n";
             deleteInfo();
             break;
 
         default:
-            std::cout << "\n Plz enter the number we mentioned!" << "\n";
-            std::cout << " > ";
-            std::cin >> opt;
+            cout << "\n Plz enter the number we mentioned!" << "\n";
+            cout << " > ";
+            cin >> opt;
             break;
 
         }
 
         cin.clear();
-        std::cout << "\n";
-        std::cout << " Wanna exit? ( YES = 1 / NO = others ) ";
-        std::cin >> check;
-        std::cout << "\n";
+        cout << "\n";
+        cout << " Wanna exit? ( YES = 1 / NO = others ) ";
+        cin >> check;
+        cout << "\n";
 
         if (check == 1) {
             exit++;
@@ -123,26 +129,26 @@ void insertInfo() {
         string username, password, location;
 
         //Instructions for inserting info
-        std::cout << "\n Recording Information ( ID, Username, Password, Amount, Age, Location ) \n";
-        std::cout << " When entering name, password, and location, use _ (underscore) instead of space.\n";
-        std::cout << " Enter Ctrl+Z for exit.\n";
-        std::cout << " > ";
+        cout << "\n Recording Information ( ID, Username, Password, Amount, Age, Location ) \n";
+        cout << " When entering name, password, and location, use _ (underscore) instead of space.\n";
+        cout << " Enter Ctrl+Z for exit.\n";
+        cout << " > ";
 
-        std::cin >> id >> username >> password >> amount >> age >> location;
+        cin >> id >> username >> password >> amount >> age >> location;
 
         while (!feof(stdin)) {
 
             writeFile << setw(6) << left << id << setw(20) << left << username << setw(15) << left << password 
                 << setw(12) << right << amount << setw(5) << right << age << "    " << setw(15) << left << location << endl;
-            std::cout << " > ";
-            std::cin >> id >> username >> password >> amount >> age >> location;
+            cout << " > ";
+            cin >> id >> username >> password >> amount >> age >> location;
 
         }
 
     }
     else
     {
-        std::cout << " File has not been created yet (OR) Unable to open! \n";
+        cout << " File has not been created yet (OR) Unable to open! \n";
     }
 
     writeFile.close();
@@ -157,15 +163,15 @@ void showInfo() {
 
     if (!readFile.fail()) {
 
-        std::cout << " Info of all records\n\n";
+        cout << " Info of all records\n\n";
 
-        std::cout << setw(6) << left << " ID" << setw(20) << left << " Username" << setw(15) << left << " Password"
+        cout << setw(6) << left << " ID" << setw(20) << left << " Username" << setw(15) << left << " Password"
             << setw(12) << right << " Amount" << "  " << setw(5) << left << " Age"
             << "  " << setw(15) << left << " Location" << endl;
         
         while (getline(readFile, line))
         {
-            std::cout << " " << line << endl;
+            cout << " " << line << endl;
         }
 
         readFile.clear();
@@ -173,7 +179,7 @@ void showInfo() {
     }
     else
     {
-        std::cout << " File has not been created yet (OR) Unable to open! \n";
+        cout << " File has not been created yet (OR) Unable to open! \n";
     }
 
     readFile.close();
@@ -189,7 +195,7 @@ void updateInfo(int tLines) {
     if (readAllData.is_open()) {
 
         //First store all info of File into the structure
-        std::cout << " Updating Record \n\n" ;
+        cout << " Updating Record \n\n" ;
 
         short int idRead = 0, ageRead = 0;
         string usernameRead, passwordRead, locationRead;
@@ -207,7 +213,7 @@ void updateInfo(int tLines) {
             info[i].age = ageRead;
             info[i].location = locationRead;
 
-            std::cout << " " << setw(6) << left << info[i].id << setw(20) << left << info[i].username 
+            cout << " " << setw(6) << left << info[i].id << setw(20) << left << info[i].username 
                 << setw(15) << left << info[i].password << setw(12) << right << info[i].amount << "  " 
                 << setw(5) << left << info[i].age << "  " << setw(15) << left << info[i].location << endl;
 
@@ -216,38 +222,38 @@ void updateInfo(int tLines) {
         }
         
         //Get the line that user want to update
-        std::cout << "\n Enter line number to update : ";
-        std::cin >> lineNumber;
+        cout << "\n Enter line number to update : ";
+        cin >> lineNumber;
         lineNumber--;
-        std::cout << "\n";
+        cout << "\n";
         
-        std::cout << " " << info[lineNumber].id << "   " << info[lineNumber].username << "   " << info[lineNumber].password
+        cout << " " << info[lineNumber].id << "   " << info[lineNumber].username << "   " << info[lineNumber].password
             << "   " << info[lineNumber].amount << "   " << info[lineNumber].age << "   " << info[lineNumber].location << endl;
         
         //Ask data that user want to update
-        std::cout << " \n";
-        std::cout << " Enter data to update.\n";
-        std::cout << " ID       > ";
-        std::cin >> info[lineNumber].id;
+        cout << " \n";
+        cout << " Enter data to update.\n";
+        cout << " ID       > ";
+        cin >> info[lineNumber].id;
 
-        std::cout << " Username > ";
-        std::cin >> info[lineNumber].username;
+        cout << " Username > ";
+        cin >> info[lineNumber].username;
 
-        std::cout << " Password > ";
-        std::cin >> info[lineNumber].password;
+        cout << " Password > ";
+        cin >> info[lineNumber].password;
 
-        std::cout << " Amount   > ";
-        std::cin >> info[lineNumber].amount;
+        cout << " Amount   > ";
+        cin >> info[lineNumber].amount;
 
-        std::cout << " Age      > ";
-        std::cin >> info[lineNumber].age;
+        cout << " Age      > ";
+        cin >> info[lineNumber].age;
 
-        std::cout << " Location > ";
-        std::cin >> info[lineNumber].location;
-        std::cout << " \n";
+        cout << " Location > ";
+        cin >> info[lineNumber].location;
+        cout << " \n";
 
         //Output the updated data
-        std::cout << " " << info[lineNumber].id << "   " << info[lineNumber].username << "   " << info[lineNumber].password
+        cout << " " << info[lineNumber].id << "   " << info[lineNumber].username << "   " << info[lineNumber].password
             << "   " << info[lineNumber].amount << "   " << info[lineNumber].age << "   " << info[lineNumber].location << endl;
 
         //write the updated data into the File
@@ -265,14 +271,14 @@ void updateInfo(int tLines) {
 
         }
 
-        std::cout << "\n Updating Data completed.\n";
+        cout << "\n Updating Data completed.\n";
 
         updateInfo.close();
 
     }
     else
     {
-        std::cout << " File has not been created yet (OR) Unable to open! \n";
+        cout << " File has not been created yet (OR) Unable to open! \n";
     }
 
     readAllData.close();
@@ -289,16 +295,16 @@ void deleteInfo() {
 
     if (readToDelete.is_open()) {
 
-        std::cout << " All records in File\n\n";
+        cout << " All records in File\n\n";
 
         //Show all data of the File first
-        std::cout << setw(6) << left << " ID" << setw(20) << left << " Username" << setw(15) << left << " Password"
+        cout << setw(6) << left << " ID" << setw(20) << left << " Username" << setw(15) << left << " Password"
             << setw(12) << right << " Amount" << "  " << setw(5) << left << " Age"
             << "  " << setw(15) << left << " Location" << endl;
 
         while (getline(readToDelete, line)) {
             lines.push_back(line);
-            std::cout << " " << line << endl;
+            cout << " " << line << endl;
         }
 
         readToDelete.clear();
@@ -308,9 +314,9 @@ void deleteInfo() {
         if (deleteInfo.is_open()) {
 
             //Ask the line that user want to update
-            std::cout << "\n Deleting Info \n\n";
-            std::cout << " Enter line number to delete > ";
-            std::cin >> lineNumber;
+            cout << "\n Deleting Info \n\n";
+            cout << " Enter line number to delete > ";
+            cin >> lineNumber;
             lineNumber--;
 
             //Delete the line that user want to and restore undeleted data to the File
@@ -322,7 +328,7 @@ void deleteInfo() {
 
             }
 
-            std::cout << "\n Deleting line number " << lineNumber + 1 << " complete.\n\n";
+            cout << "\n Deleting line number " << lineNumber + 1 << " complete.\n\n";
 
         }
 
@@ -331,7 +337,7 @@ void deleteInfo() {
     }
     else
     {
-        std::cout << " File has not been created yet (OR) Unable to open! \n";
+        cout << " File has not been created yet (OR) Unable to open! \n";
     }
 
     readToDelete.close();
