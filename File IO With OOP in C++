@@ -1,0 +1,492 @@
+// FIle IO with OOP
+
+#include <iostream>
+#include <fstream>
+#include <string>
+#include <string.h>
+#include <iomanip>
+#include <vector>
+#include <stdio.h>
+#include <conio.h>
+
+using namespace std;
+
+string fileName = "FileIO_with_OOP.txt";
+
+class Info {
+
+    private:
+        int id = 0, age = 0, amount = 0;
+        string username, password, location;
+
+    public:
+
+        void getData();
+        void storeData();
+        void showData();
+        void showAllData();
+        void updateData();
+        void searchBy();
+        void searchData(string name);
+        void searchData(int ID);
+        void deleteData();
+
+};
+
+// To get data from user.
+void Info::getData() {
+
+    cin >> id;
+    cin.ignore();
+    cin >> username;
+    cin.ignore();
+    cin >> password;
+    cin >> amount;
+    cin >> age;
+    cin.ignore();
+    cin >> location;
+
+}
+
+// Insert the data that is get from user into the File.
+void Info::storeData() {
+
+    fstream writeFile(fileName, ios::app);
+
+    if (writeFile.is_open()) {
+
+        getData();
+
+        while (!feof(stdin))
+        {
+
+            writeFile << setw(6) << left << id << setw(20) << left << username << setw(15) << left << password
+                << setw(12) << right << amount << setw(5) << right << age << "    " << setw(15) << left << location << endl;
+            cout << " > ";
+            getData();
+        
+        }
+
+    }
+    else
+    {
+        cout << " File has not been created yet (OR) Unable to open! \n";
+    }
+
+    writeFile.close();
+
+}
+
+// To show data that is after stored (or) before stored.
+void Info::showData() {
+
+    cout << " " << setw(6) << left << id << setw(20) << left << username << setw(15) << left << password
+        << setw(12) << right << amount << setw(5) << right << age << "    " << setw(15) << left << location << endl;
+
+}
+
+// To show all data that are already stored in the File.
+void Info::showAllData() {
+
+    // For total lines in the File.
+    int tLines = 0;
+
+    ifstream readForLines(fileName);
+    if (readForLines.is_open()) {
+
+        string line;
+        vector<string> totalLines;
+
+        while (!readForLines.eof()) {
+
+            getline(readForLines, line);
+            totalLines.push_back(line);
+
+        }
+
+        tLines = totalLines.size();
+
+    }
+
+    // To show all the data.
+    readForLines.close();
+
+    ifstream readFile(fileName);
+
+    if (!readFile.fail()) {
+
+        cout << " Info of all Data\n\n";
+
+        int i = 0;
+
+        while (i < tLines - 1) {
+
+            readFile >> this->id >> this->username >> this->password >> this->amount >> this->age >> this->location;
+            showData();
+            i++;
+
+        }
+
+    }
+    else
+    {
+        cout << " File has not been created yet (OR) Unable to open! \n";
+    }
+
+    readFile.close();
+
+}
+
+// To update data that are stored in the File and to update the File.
+void Info::updateData() {
+
+    // To show all the data in the File as a reference.
+    showAllData();
+
+    int idForUpdate = 0, idUpdated = 0, ageUpdated = 0, amountUpdated = 0;
+    string usernameUpdated, passwordUpdated, locationUpdated;
+
+    cout << "\n Enter ID U wanna update > ";
+    cin >> idForUpdate;
+
+    // To retrieve data that want to update
+    ifstream readForUpdate(fileName);
+
+    if (readForUpdate.is_open()) {
+
+        _getch;
+
+        // To write the updated and unchanged data into the File.
+        ofstream updatedFile("temporary_file.txt");
+
+        readForUpdate >> this->id >> this->username >> this->password >> this->amount >> this->age >> this->location;
+
+        while (!readForUpdate.eof()) {
+
+            if (idForUpdate == id) {
+
+                cout << "\n";
+                showData();
+                cout << "\n";
+                cout << " Enter data to update. \n";
+                cout << " > ";
+                cin >> idUpdated;
+                cin.ignore();
+                cin >> usernameUpdated;
+                cin.ignore();
+                cin >> passwordUpdated;
+                cin >> amountUpdated;
+                cin >> ageUpdated;
+                cin.ignore();
+                cin >> locationUpdated;
+                cout << "\n";
+
+                // Show user input data for update.
+                cout << " " << idUpdated << "   " << usernameUpdated << "   " << passwordUpdated << "   " << amountUpdated
+                    << "   " << ageUpdated << "   " << locationUpdated << endl;
+
+                // Write updated data into the File
+                updatedFile << setw(6) << left << idUpdated << setw(20) << left << usernameUpdated 
+                    << setw(15) << left << passwordUpdated << setw(12) << right << amountUpdated
+                    << setw(5) << right << ageUpdated << "    " << setw(15) << left << locationUpdated << endl;
+
+            }
+            else {
+
+                // Rewrite unchanged data.
+                updatedFile << setw(6) << left << id << setw(20) << left << username << setw(15) << left << password 
+                    << setw(12) << right << amount << setw(5) << right << age << "    " << setw(15) << left << location << endl;
+
+            }
+
+            readForUpdate >> this->id >> this->username >> this->password >> this->amount >> this->age >> this->location;
+
+        }
+
+        updatedFile.close();
+
+    }
+    else
+    {
+        cout << " File has not been created yet (OR) Unable to open! \n";
+    }
+
+    readForUpdate.close();
+    _getch;
+    remove("FileIO_with_OOP.txt");
+    _getch;
+
+    // Remove original File and replaced it with the Updated File.
+    int res = rename("temporary_file.txt", "FileIO_with_OOP.txt");
+
+    if (res == 0) {
+        cout << " The data at ID " << idForUpdate << " has been Updated.\n";
+    }
+
+}
+
+// To search data with Username
+void Info::searchData(string name) {
+
+    ifstream searchFile(fileName);
+    int counter = 0;
+
+    if (searchFile.is_open()) {
+
+        searchFile >> this->id >> this->username >> this->password >> this->amount >> this->age >> this->location;
+        
+        while (!searchFile.eof()) {
+
+            int res = name.compare(username);
+
+            if (res == 0) {
+                showData();
+                counter++;
+            }
+
+            searchFile >> this->id >> this->username >> this->password >> this->amount >> this->age >> this->location;
+
+        }
+
+        if (counter == 0) {
+            cout << " Data not Found! \n";
+        }
+
+    }
+    else {
+        cout << " File has not been created yet (OR) Unable to open! \n";
+    }
+
+    searchFile.close();
+
+}
+
+// To search data with ID
+void Info::searchData(int ID) {
+
+    ifstream searchFile(fileName);
+    int counter = 0;
+
+    if (searchFile.is_open()) {
+
+        searchFile >> this->id >> this->username >> this->password >> this->amount >> this->age >> this->location;
+
+        while (!searchFile.eof()) {
+
+            if (ID == id) {
+                showData();
+                counter++;
+            }
+
+            searchFile >> this->id >> this->username >> this->password >> this->amount >> this->age >> this->location;
+
+        }
+
+        if (counter == 0) {
+            cout << " Data not Found! \n";
+        }
+
+    }
+    else {
+        cout << " File has not been created yet (OR) Unable to open! \n";
+    }
+
+    searchFile.close();
+
+}
+
+// Function to ask which way is used to search
+void Info::searchBy() {
+
+    // To show all the data in the File as a reference.
+    cout << "\n";
+    showAllData();
+    cout << "\n";
+
+    int searchWay = 0, exitSearch = 0, check = 0, ID = 0;
+    string name;
+    
+    cout << " Which way for searching: ( 1 = ID , 2 = Name )? \n";
+
+    while (exitSearch < 1) {
+
+        cout << " > ";
+        cin >> searchWay;
+
+        switch (searchWay)
+        {
+
+            case 1:
+                cout << "\n Enter ID > ";
+                cin >> ID;
+                cout << "\n";
+                searchData(ID);
+                exitSearch++;
+                break;
+
+            case 2:
+                cout << "\n Enter Name > ";
+                cin >> name;
+                cout << "\n";
+                searchData(name);
+                exitSearch++;
+                break;
+
+            default:
+                cout << "\n Plz enter the number we mentioned!" << "\n";
+                break;
+        
+        }
+
+        exitSearch--;
+        cin.clear();
+        cout << "\n";
+        cout << " Wanna search again? ( YES = 1 / NO = others ) > ";
+        cin >> check;
+        cout << "\n";
+
+        if (check != 1) {
+            exitSearch++;
+        }
+        else {
+            cout << " Which way for searching: ( 1 = ID , 2 = Name )? \n";
+        }
+
+    }
+
+}
+
+// To delete data that user wants to.
+void Info::deleteData() {
+
+    // To show all the data in the File as a reference.
+    showAllData();
+
+    int idForDelete = 0;
+
+    cout << "\n Enter ID U wanna delete > ";
+    cin >> idForDelete;
+
+    // To retrieve data that want to delete
+    ifstream readForDelete(fileName);
+
+    if (!readForDelete.is_open()) {
+        cout << " File has not been created yet (OR) Unable to open! \n";
+    }
+    else
+    {
+
+        _getch;
+
+        // To write the remained data into the File.
+        ofstream deleteData("temporary_file.txt");
+
+        readForDelete >> this->id >> this->username >> this->password >> this->amount >> this->age >> this->location;
+
+        while (!readForDelete.eof()) {
+
+            // To delete data
+            if (idForDelete != id) {
+
+                deleteData << setw(6) << left << id << setw(20) << left << username << setw(15) << left << password
+                    << setw(12) << right << amount << setw(5) << right << age << "    " << setw(15) << left << location << endl;
+
+            }
+
+            readForDelete >> this->id >> this->username >> this->password >> this->amount >> this->age >> this->location;
+
+        }
+
+        deleteData.close();
+
+    }
+
+    readForDelete.close();
+    _getch;
+    remove("FileIO_with_OOP.txt");
+    _getch;
+
+    // Remove original File and replaced it with the Updated File.
+    int res = rename("temporary_file.txt", "FileIO_with_OOP.txt");
+
+    if (res == 0) {
+        cout << " The data at ID " << idForDelete << " has been deleted.\n";
+    }
+
+}
+
+int main()
+{
+
+    Info info;
+
+    short int opt, exit = 0, check = 0;
+
+    cout << " Select 1,2,3,4 or 5.\n";
+    cout << " 1) Insert data.\n";
+    cout << " 2) Open data.\n";
+    cout << " 3) Update data.\n";
+    cout << " 4) Search data.\n";
+    cout << " 5) Delete data.\n";
+
+    //Ask function and call function
+    while (exit < 1) {
+
+        cout << " Enter number > ";
+        cin >> opt;
+
+        switch (opt) {
+
+        case 1:
+            //Instructions for inserting info
+            cout << "\n Recording Information ( ID, Username, Password, Amount, Age, Location ) \n";
+            cout << " When entering name, password, and location, use _ (underscore) instead of space.\n";
+            cout << " Enter Ctrl+Z for exit.\n";
+            cout << " > ";
+            info.storeData();
+            break;
+
+        case 2:
+            cout << "\n";
+            info.showAllData();
+            break;
+
+        case 3:
+            cout << "\n";
+            info.updateData();
+            break;
+
+        case 4:
+            cout << "\n";
+            info.searchBy();
+            break;
+
+        case 5:
+            cout << "\n";
+            info.deleteData();
+            break;
+
+        default:
+            // Warning and ask data again.
+            cout << "\n Plz enter the number we mentioned!" << "\n";
+            cout << " > ";
+            cin >> opt;
+            break;
+
+        }
+
+        cin.clear();
+        cout << "\n";
+        cout << " Wanna exit and close? ( YES = 1 / NO = others ) ";
+        cin >> check;
+        cout << "\n";
+
+        if (check == 1) {
+            exit++;
+        }
+
+    }
+
+    return 0;
+
+}
