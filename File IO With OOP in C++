@@ -27,8 +27,8 @@ class Info {
         void showAllData();
         void updateData();
         void searchBy();
-        void searchData(string name);
-        void searchData(int ID);
+        void searchData(string name, ifstream& fName);
+        void searchData(int ID, ifstream& fName);
         void deleteData();
 
 };
@@ -226,14 +226,13 @@ void Info::updateData() {
 }
 
 // To search data with Username
-void Info::searchData(string name) {
+void Info::searchData(string name, ifstream& fName) {
 
-    ifstream searchFile(fileName);
     int counter = 0;
 
-    searchFile >> this->id >> this->username >> this->password >> this->amount >> this->age >> this->location;
+    fName >> this->id >> this->username >> this->password >> this->amount >> this->age >> this->location;
 
-    while (!searchFile.eof()) {
+    while (!fName.eof()) {
 
         int res = name.compare(username);
 
@@ -242,7 +241,7 @@ void Info::searchData(string name) {
             counter++;
         }
 
-        searchFile >> this->id >> this->username >> this->password >> this->amount >> this->age >> this->location;
+        fName >> this->id >> this->username >> this->password >> this->amount >> this->age >> this->location;
 
     }
 
@@ -250,26 +249,23 @@ void Info::searchData(string name) {
         cout << " Data not Found! \n";
     }
 
-    searchFile.close();
-
 }
 
 // To search data with ID
-void Info::searchData(int ID) {
+void Info::searchData(int ID, ifstream& fName) {
 
-    ifstream searchFile(fileName);
     int counter = 0;
 
-    searchFile >> this->id >> this->username >> this->password >> this->amount >> this->age >> this->location;
+    fName >> this->id >> this->username >> this->password >> this->amount >> this->age >> this->location;
 
-    while (!searchFile.eof()) {
+    while (!fName.eof()) {
 
         if (ID == id) {
                 showData();
                 counter++;
         }
 
-        searchFile >> this->id >> this->username >> this->password >> this->amount >> this->age >> this->location;
+        fName >> this->id >> this->username >> this->password >> this->amount >> this->age >> this->location;
 
     }
 
@@ -277,17 +273,15 @@ void Info::searchData(int ID) {
             cout << " Data not Found! \n";
     }
 
-    searchFile.close();
-
 }
 
 // Function to ask which way is used to search
 void Info::searchBy() {
 
     // File For Checking
-    ifstream fileForChecking(fileName);
+    ifstream readForSearch(fileName);
 
-    if (fileForChecking.is_open()) {
+    if (readForSearch.is_open()) {
 
         // To show all the data in the File as a reference.
         cout << "\n";
@@ -311,7 +305,7 @@ void Info::searchBy() {
                 cout << "\n Enter ID > ";
                 cin >> ID;
                 cout << "\n";
-                searchData(ID);
+                searchData(ID, readForSearch);
                 exitSearch++;
                 break;
 
@@ -319,7 +313,7 @@ void Info::searchBy() {
                 cout << "\n Enter Name > ";
                 cin >> name;
                 cout << "\n";
-                searchData(name);
+                searchData(name, readForSearch);
                 exitSearch++;
                 break;
 
@@ -351,7 +345,7 @@ void Info::searchBy() {
         cout << " File has not been created yet (OR) Unable to open! \n";
     }
 
-    fileForChecking.close();
+    readForSearch.close();
 
 }
 
