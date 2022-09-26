@@ -1,4 +1,4 @@
-// FIle IO with OOP
+// File IO with OOP.cpp 
 
 #include <iostream>
 #include <fstream>
@@ -140,19 +140,19 @@ void Info::showAllData() {
 // To update data that are stored in the File and to update the File.
 void Info::updateData() {
 
-    // To show all the data in the File as a reference.
-    showAllData();
-
     int idForUpdate = 0, idUpdated = 0, ageUpdated = 0, amountUpdated = 0;
     string usernameUpdated, passwordUpdated, locationUpdated;
-
-    cout << "\n Enter ID U wanna update > ";
-    cin >> idForUpdate;
 
     // To retrieve data that want to update
     ifstream readForUpdate(fileName);
 
     if (readForUpdate.is_open()) {
+
+        // To show all the data in the File as a reference.
+        showAllData();
+
+        cout << "\n Enter ID U wanna update > ";
+        cin >> idForUpdate;
 
         _getch;
 
@@ -231,30 +231,23 @@ void Info::searchData(string name) {
     ifstream searchFile(fileName);
     int counter = 0;
 
-    if (searchFile.is_open()) {
+    searchFile >> this->id >> this->username >> this->password >> this->amount >> this->age >> this->location;
+
+    while (!searchFile.eof()) {
+
+        int res = name.compare(username);
+
+        if (res == 0) {
+            showData();
+            counter++;
+        }
 
         searchFile >> this->id >> this->username >> this->password >> this->amount >> this->age >> this->location;
-        
-        while (!searchFile.eof()) {
-
-            int res = name.compare(username);
-
-            if (res == 0) {
-                showData();
-                counter++;
-            }
-
-            searchFile >> this->id >> this->username >> this->password >> this->amount >> this->age >> this->location;
-
-        }
-
-        if (counter == 0) {
-            cout << " Data not Found! \n";
-        }
 
     }
-    else {
-        cout << " File has not been created yet (OR) Unable to open! \n";
+
+    if (counter == 0) {
+        cout << " Data not Found! \n";
     }
 
     searchFile.close();
@@ -267,28 +260,21 @@ void Info::searchData(int ID) {
     ifstream searchFile(fileName);
     int counter = 0;
 
-    if (searchFile.is_open()) {
+    searchFile >> this->id >> this->username >> this->password >> this->amount >> this->age >> this->location;
+
+    while (!searchFile.eof()) {
+
+        if (ID == id) {
+                showData();
+                counter++;
+        }
 
         searchFile >> this->id >> this->username >> this->password >> this->amount >> this->age >> this->location;
 
-        while (!searchFile.eof()) {
-
-            if (ID == id) {
-                showData();
-                counter++;
-            }
-
-            searchFile >> this->id >> this->username >> this->password >> this->amount >> this->age >> this->location;
-
-        }
-
-        if (counter == 0) {
-            cout << " Data not Found! \n";
-        }
-
     }
-    else {
-        cout << " File has not been created yet (OR) Unable to open! \n";
+
+    if (counter == 0) {
+            cout << " Data not Found! \n";
     }
 
     searchFile.close();
@@ -298,23 +284,28 @@ void Info::searchData(int ID) {
 // Function to ask which way is used to search
 void Info::searchBy() {
 
-    // To show all the data in the File as a reference.
-    cout << "\n";
-    showAllData();
-    cout << "\n";
+    // File For Checking
+    ifstream fileForChecking(fileName);
 
-    int searchWay = 0, exitSearch = 0, check = 0, ID = 0;
-    string name;
-    
-    cout << " Which way for searching: ( 1 = ID , 2 = Name )? \n";
+    if (fileForChecking.is_open()) {
 
-    while (exitSearch < 1) {
+        // To show all the data in the File as a reference.
+        cout << "\n";
+        showAllData();
+        cout << "\n";
 
-        cout << " > ";
-        cin >> searchWay;
+        int searchWay = 0, exitSearch = 0, check = 0, ID = 0;
+        string name;
 
-        switch (searchWay)
-        {
+        cout << " Which way for searching: ( 1 = ID , 2 = Name )? \n";
+
+        while (exitSearch < 1) {
+
+            cout << " > ";
+            cin >> searchWay;
+
+            switch (searchWay)
+            {
 
             case 1:
                 cout << "\n Enter ID > ";
@@ -335,46 +326,54 @@ void Info::searchBy() {
             default:
                 cout << "\n Plz enter the number we mentioned!" << "\n";
                 break;
-        
-        }
 
-        exitSearch--;
-        cin.clear();
-        cout << "\n";
-        cout << " Wanna search again? ( YES = 1 / NO = others ) > ";
-        cin >> check;
-        cout << "\n";
+            }
 
-        if (check != 1) {
-            exitSearch++;
-        }
-        else {
-            cout << " Which way for searching: ( 1 = ID , 2 = Name )? \n";
+            exitSearch--;
+            cin.clear();
+            cout << "\n";
+            cout << " Wanna search again? ( YES = 1 / NO = others ) > ";
+            cin >> check;
+            cout << "\n";
+
+            if (check != 1) {
+                exitSearch++;
+            }
+            else {
+                cout << " Which way for searching: ( 1 = ID , 2 = Name )? \n";
+            }
+
         }
 
     }
+    else
+    {
+        cout << " File has not been created yet (OR) Unable to open! \n";
+    }
+
+    fileForChecking.close();
 
 }
 
 // To delete data that user wants to.
 void Info::deleteData() {
 
-    // To show all the data in the File as a reference.
-    showAllData();
-
-    int idForDelete = 0;
-
-    cout << "\n Enter ID U wanna delete > ";
-    cin >> idForDelete;
-
     // To retrieve data that want to delete
     ifstream readForDelete(fileName);
+
+    int idForDelete = 0;
 
     if (!readForDelete.is_open()) {
         cout << " File has not been created yet (OR) Unable to open! \n";
     }
     else
     {
+
+        // To show all the data in the File as a reference.
+        showAllData();
+
+        cout << "\n Enter ID U wanna delete > ";
+        cin >> idForDelete;
 
         _getch;
 
@@ -419,7 +418,6 @@ int main()
 {
 
     Info info;
-
     short int opt, exit = 0, check = 0;
 
     cout << " Select 1,2,3,4 or 5.\n";
