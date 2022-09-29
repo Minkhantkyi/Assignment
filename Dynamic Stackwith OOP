@@ -1,0 +1,237 @@
+// Building Dyanmic Stack With OOP.cpp
+
+#include <iostream>
+
+using namespace std;
+
+class Stack {
+
+    private:
+        
+        int dynamicSize;
+        int currentPos;
+
+        // For dynamic array
+        int* stackArr;
+
+    public:
+
+        Stack(int size) {
+
+            dynamicSize = size;
+            currentPos = -1;
+            stackArr = new int[dynamicSize];
+
+            for (int i = 0; i < dynamicSize; i++) {
+
+                stackArr[i] = 0;
+
+            }
+
+        }
+
+        bool isEmpty() {
+
+            if (currentPos == -1) {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+
+        }
+
+        bool isFull() {
+
+            if (currentPos == dynamicSize - 1) {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+
+        }
+
+        int count() {
+
+            return currentPos + 1;
+
+        }
+
+        void push(int value) {
+
+            if (isFull()) {
+                cout << " Stack Overflow." << endl;
+            }
+            else
+            {
+                currentPos++;
+                stackArr[currentPos] = value;
+            }
+
+        }
+
+        int pop() {
+
+
+            if (isEmpty()) {
+                cout << " Stack Underflow." << endl;
+            }
+            else
+            {
+                int popvalue = stackArr[currentPos];
+                stackArr[currentPos] = 0;
+                currentPos--;
+
+                return popvalue;
+            }
+
+        }
+
+        void change(int pos, int val) {
+
+
+            stackArr[pos] = val;
+            cout << " Data at location " << pos << " have been changed with the value " << val << endl;
+
+        }
+
+        int extract(int position) {
+
+            if (isEmpty()) {
+                cout << " Stack Underflow." << endl;
+            }
+            else
+            {
+                int peekValue = stackArr[position];
+                return peekValue;
+            }
+
+        }
+
+        void display() {
+
+            cout << " Data in Stack > " ;
+
+            for (int i = dynamicSize - 1 ; i >= 0 ; i--) {
+                cout << " " << stackArr[i];
+            }
+        }
+
+};
+
+void askFun();
+
+int main()
+{
+    
+    int stackSize = 0;
+    int exit = 0;
+    int pos = 0;
+    int val = 0;
+    int pushData = 0;
+
+    cout << " Enter the size of Stack > ";
+    cin >> stackSize;
+
+    Stack stack(stackSize);
+
+    do {
+
+        int opt = 0;
+        askFun();
+        cout << " > ";
+        cin >> opt;
+        cout << endl;
+
+        switch (opt) {
+
+            case 1:
+                if (stack.isEmpty()) {
+                    cout << " Stack is EMPTY." << endl;
+                }
+                else
+                {
+                    cout << " Stack isn't EMPTY. Data contains. " << endl;
+                }
+                break;
+
+            case 2:
+                if (stack.isFull()) {
+                    cout << " Stack is FULL." << endl;
+                }
+                else
+                {
+                    cout << " Stack isn't FULL." << endl;
+                }
+                break;
+
+            case 3:
+                cout << " Enter data to push > ";
+                cin >> pushData;
+                stack.push(pushData);
+                break;
+
+            case 4:
+                cout << " Popped data > " << stack.pop() << endl;
+                break;
+
+            case 5:
+                cout << " Total data in STACK > " << stack.count() << endl;
+                break;
+
+            case 6:
+                cout << " Enter position > ";
+                cin >> pos;
+                pos--;
+                cout << " Enter value > ";
+                cin >> val;
+                stack.change(pos, val);
+                break;
+
+            case 7:
+                cout << " Enter position to extract data > ";
+                cin >> pos;
+                pos--;
+                cout << " Data at position " << pos+1 << " > " << stack.extract(pos) << endl;;
+                break;
+
+            case 8:
+                stack.display();
+                cout << endl;
+                break;
+
+            case 9:
+                system("cls");
+                break;
+
+            default:
+                cout << " Error! Only enter defined number! " << endl;
+                break;
+
+        }
+
+        cout << endl;
+
+    } while (exit < 1);
+
+    return 0;
+
+}
+
+void askFun() {
+
+    cout << " Select the number for stack operations." << endl;
+    cout << " 1) isEmpty() " << endl;
+    cout << " 2) isFull() " << endl;
+    cout << " 3) push() " << endl;
+    cout << " 4) pop() " << endl;
+    cout << " 5) count() " << endl;
+    cout << " 6) change() " << endl;
+    cout << " 7) extract() " << endl;
+    cout << " 8) display()" << endl;
+    cout << " 9) Clear the screen " << endl;
+
+}
