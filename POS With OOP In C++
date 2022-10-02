@@ -1,0 +1,813 @@
+// Cafe POS.cpp
+
+#include <iostream>
+#include <iomanip>
+
+using namespace std;
+
+// As a reference for coffee, cake and theirs' prices.
+struct ItemsAndValues{
+
+    string coffee[5] = { "Latte", "Americano", "Capuccino", "Expresso", "Mocha"};
+    int coffeePrice[5] = {100,120,150,80,90};
+
+    string cake[5] = {"Chocolate Cake","Strawberry Cake","Blueberry Cake", "Egg Pudding", "Sponge Cake"};
+    int cakePrice[5] = {30,50,35,20,25};
+
+};
+
+// Declare as global.
+ItemsAndValues iv;
+
+// To store the sold cups and cakes quantity.
+struct StoreQuantity {
+
+    // To get total cups and cakes for each coffee and cake type.
+    int latteCups, americanoCups, capuccinoCups, expressoCups, mochaCups;
+    int chocoCakes, strawCakes, blueCakes, puddingCakes, spogeCakes;
+
+    int soldCups[5];
+    int soldCakes[5];
+
+};
+
+// Declare as global.
+StoreQuantity storeQuant;
+
+class POS {
+
+    private:
+
+        int cakeBill = 0;
+        int coffeeBill = 0;
+
+        // For total bill 
+        int totalCups = 0;
+        int totalCakes = 0;
+        int totalCakeBill = 0;
+        int totalCoffeeBill = 0;
+
+    public:
+
+        // Show quantity and price when order.
+        void coffeeBalance(int coffeeCode, int cups);
+        void cakeBalance(int cakeCode, int cakeQauntity);
+
+        void storeCoffeeCups(int code, int cups);
+        void showCoffeeBill();
+
+        void storeCakes(int code, int quant);
+        void showCakesBill();
+
+        void getTotal();
+        void showTotalBill();
+
+        bool checkCoffee(int code);
+        bool checkCake(int code);
+
+        void editCoffee(int code, int cups);
+        void editCake(int code, int quant);
+
+        void delCoffee(int code);
+        void delCake(int code);
+
+};
+
+void POS::coffeeBalance(int coffeeCode, int cups) {
+
+    int price = iv.coffeePrice[coffeeCode -1];
+    coffeeBill = price * cups;
+
+    if (cups == 1) {
+        cout << " " << iv.coffee[coffeeCode - 1] << " (" << cups << ") cup   -  " << setw(5) << right << coffeeBill << endl;
+    }
+    else
+    {
+        cout << " " << iv.coffee[coffeeCode - 1] << " (" << cups << ") cups    -  " << setw(5) << right << coffeeBill << endl;
+    }
+
+}
+
+void POS::cakeBalance(int cakeCode, int cakeQauntity) {
+
+    int price = iv.cakePrice[cakeCode - 1];
+    cakeBill = price * cakeQauntity;
+
+    cout << " " << iv.cake[cakeCode - 1] << " (" << cakeQauntity << ")   -  " << setw(5) << right << cakeBill << endl;
+
+}
+
+// To store sold cups for each coffee type
+void POS::storeCoffeeCups(int code, int cups) {
+
+    switch (code)
+    {
+
+        case 1:
+            storeQuant.latteCups += cups;
+            storeQuant.soldCups[0] = storeQuant.latteCups;
+            coffeeBalance(code, cups);
+            break;
+
+        case 2:
+            storeQuant.americanoCups += cups;
+            storeQuant.soldCups[1] = storeQuant.americanoCups;
+            coffeeBalance(code, cups);
+            break;
+
+        case 3:
+            storeQuant.capuccinoCups += cups;
+            storeQuant.soldCups[2] = storeQuant.capuccinoCups;
+            coffeeBalance(code, cups);
+            break;
+        
+        case 4:
+            storeQuant.expressoCups += cups;
+            storeQuant.soldCups[3] = storeQuant.expressoCups;
+            coffeeBalance(code, cups);
+            break;
+
+        case 5:
+            storeQuant.mochaCups += cups;
+            storeQuant.soldCups[4] = storeQuant.mochaCups;
+            coffeeBalance(code, cups);
+            break;
+
+        default:
+            break;
+    
+    }
+
+}
+
+// To show all sold coffees' cups and types
+void POS::showCoffeeBill() {
+    
+    cout << "    Coffee Bill " << endl;
+
+    for (int i = 0; i < 5; i++) {
+
+        if (storeQuant.soldCups[i] != 0) {
+
+            int coffeeUnitPrice = iv.coffeePrice[i];
+            int coffeeCups = storeQuant.soldCups[i];
+            coffeeBill = coffeeUnitPrice * coffeeCups;
+
+            if (coffeeCups == 1) {
+                cout << " " << i+1 << ") " << setw(23) << left << iv.coffee[i] << setw(2) << right << coffeeCups << "  cup "
+                    << setw(8) << right << "-" << setw(10) << right << coffeeBill << endl;
+            }
+            else
+            {
+                cout << " " << i+1 << ") " << setw(23) << left << iv.coffee[i] << setw(2) << right << coffeeCups << "  cups "
+                    << setw (7) << right << "-" << setw(10) << right << coffeeBill << endl;
+            }
+
+        }
+
+    }
+
+    cout << "\n";
+
+}
+
+// To store sold cakes for each cake type
+void POS:: storeCakes(int code, int quant) {
+
+    switch (code)
+    {
+
+    case 1:
+        storeQuant.chocoCakes += quant;
+        storeQuant.soldCakes[0] = storeQuant.chocoCakes;
+        cakeBalance(code, quant);
+        break;
+
+    case 2:
+        storeQuant.strawCakes += quant;
+        storeQuant.soldCakes[1] = storeQuant.strawCakes;
+        cakeBalance(code, quant);
+        break;
+
+    case 3:
+        storeQuant.blueCakes += quant;
+        storeQuant.soldCakes[2] = storeQuant.blueCakes;
+        cakeBalance(code, quant);
+        break;
+
+    case 4:
+        storeQuant.puddingCakes += quant;
+        storeQuant.soldCakes[3] = storeQuant.puddingCakes;
+        cakeBalance(code, quant);
+        break;
+
+    case 5:
+        storeQuant.spogeCakes += quant;
+        storeQuant.soldCakes[4] = storeQuant.spogeCakes;
+        cakeBalance(code, quant);
+        break;
+
+    default:
+        break;
+
+    }
+
+}
+
+// To show all sold cakes' quantities and types
+void POS::showCakesBill() {
+
+    cout << "    Cake Bill " << endl;
+
+    for (int i = 0; i < 5; i++) {
+
+        if (storeQuant.soldCakes[i] != 0) {
+
+            int cakeUnitPrice = iv.cakePrice[i];
+            int cakeQuant = storeQuant.soldCakes[i];
+            cakeBill = cakeUnitPrice * cakeQuant;
+
+            if (cakeQuant == 1) {
+                cout << " " << i+1 << ") " << setw(23) << left << iv.cake[i] << setw(2) << right << cakeQuant << "  cake  "
+                    << setw(6) << right << "-" << setw(10) << right << cakeBill << endl;
+            }
+            else
+            {
+                cout << " " << i+1 << ") " << setw(23) << left << iv.cake[i] << setw(2) << right << cakeQuant << "  cakes "
+                    << setw(6) << right << "-" << setw(10) << right << cakeBill << endl;
+            }
+
+        }
+
+    }
+
+    cout << "\n";
+
+}
+
+// To get total quantities and bill for coffee and cakes
+void POS::getTotal() {
+
+    totalCups = 0;
+    totalCoffeeBill = 0;
+    totalCakes = 0;
+    totalCakeBill = 0;
+
+    for (int i = 0; i < 5; i++) {
+
+        if (storeQuant.soldCups[i] != 0) {
+
+            int coffeeUnitPrice = iv.coffeePrice[i];
+            int coffeeCups = storeQuant.soldCups[i];
+            totalCups += coffeeCups;
+            totalCoffeeBill += coffeeUnitPrice * coffeeCups;
+
+        }
+
+        if (storeQuant.soldCakes[i] != 0) {
+
+            int cakeUnitPrice = iv.cakePrice[i];
+            int cakeQuant = storeQuant.soldCakes[i];
+            totalCakes += cakeQuant;
+            totalCakeBill += cakeUnitPrice * cakeQuant;
+
+        }
+
+    }
+
+}
+
+// Show all total quantities and bill.
+void POS::showTotalBill() {
+
+    getTotal();
+
+    int totalBill = totalCoffeeBill + totalCakeBill;
+    
+    cout << " " << setw (23) << left << "Coffee Bill " << setw(5) << right << totalCups << "  cups"  << setw(8) << right << ">"
+        << setw(10) << right << totalCoffeeBill << endl;
+    cout << " " << setw(23) << left << "Cake Bill " << setw(5) << right << totalCakes << "  cakes" << setw(7) << right << ">"
+        << setw(10) << right << totalCakeBill << endl;
+    
+    cout << "------------------------------------------------------" << endl;
+    cout << " " << setw(40) << left << "Total Bill " << " > " << setw(9) << right << totalBill << endl;
+    cout << endl;
+
+}
+
+// To check coffee is sold or not for edit function and delete function.
+bool POS::checkCoffee(int code) {
+
+    if (storeQuant.soldCups[code - 1] > 0) {
+        return true;
+    }
+    else
+    {
+        cout << "\n";
+        cout << " Error. Enter only code in above list! " << "\n\n";
+        return false;
+    }
+
+}
+
+// To check cake is sold or not for edit function and delete function.
+bool POS::checkCake(int code) {
+
+    if (storeQuant.soldCakes[code - 1] > 0) {
+        return true;
+    }
+    else
+    {
+        cout << "\n";
+        cout << " Error. Enter only code in above list! " << "\n\n";
+        return false;
+    }
+
+}
+
+// To edit sold coffee's quantity.
+void POS::editCoffee(int code, int cups) {
+
+    switch (code)
+    {
+
+    case 1:
+        storeQuant.soldCups[0] = cups;
+        coffeeBalance(code, cups);
+        break;
+
+    case 2:
+        storeQuant.soldCups[1] = cups;
+        coffeeBalance(code, cups);
+        break;
+
+    case 3:
+        storeQuant.soldCups[2] = cups;
+        coffeeBalance(code, cups);
+        break;
+
+    case 4:
+        storeQuant.soldCups[3] = cups;
+        coffeeBalance(code, cups);
+        break;
+
+    case 5:
+        storeQuant.soldCups[4] = cups;
+        coffeeBalance(code, cups);
+        break;
+
+    default:
+        break;
+
+    }
+
+}
+
+// To edit sold cake's quantity.
+void POS::editCake(int code, int quant) {
+
+    switch (code)
+    {
+
+    case 1:
+        storeQuant.soldCakes[0] = quant;
+        cakeBalance(code, quant);
+        break;
+
+    case 2:
+        storeQuant.soldCakes[1] = quant;
+        cakeBalance(code, quant);
+        break;
+
+    case 3:
+        storeQuant.soldCakes[2] = quant;
+        cakeBalance(code, quant);
+        break;
+
+    case 4:
+        storeQuant.soldCakes[3] = quant;
+        cakeBalance(code, quant);
+        break;
+
+    case 5:
+        storeQuant.soldCakes[4] = quant;
+        cakeBalance(code, quant);
+        break;
+
+    default:
+        break;
+
+    }
+
+}
+
+// To delete sold coffee.
+void POS:: delCoffee(int code) {
+
+    switch (code)
+    {
+
+    case 1:
+        storeQuant.soldCups[0] = 0;
+        break;
+
+    case 2:
+        storeQuant.soldCups[1] = 0;
+        break;
+
+    case 3:
+        storeQuant.soldCups[2] = 0;
+        break;
+
+    case 4:
+        storeQuant.soldCups[3] = 0;
+        break;
+
+    case 5:
+        storeQuant.soldCups[4] = 0;
+        break;
+
+    default:
+        break;
+
+    }
+
+}
+
+// To delete sold coffee
+void POS::delCake(int code) {
+
+    switch (code)
+    {
+
+    case 1:
+        storeQuant.soldCakes[0] = 0;
+        break;
+
+    case 2:
+        storeQuant.soldCakes[1] = 0;
+        break;
+
+    case 3:
+        storeQuant.soldCakes[2] = 0;
+        break;
+
+    case 4:
+        storeQuant.soldCakes[3] = 0;
+        break;
+
+    case 5:
+        storeQuant.soldCakes[4] = 0;
+        break;
+
+    default:
+        break;
+
+    }
+
+}
+
+// Declare as global.
+POS cafe;
+
+// Show cafe's name and menu
+void welconeAndMenu();
+
+// Ask coffee or cake.
+void askOrder();
+void orderCoffee();
+void orderCake();
+
+// Edit sold coffee or cake
+void edit();
+
+// Delete sold coffee or cake
+void del();
+
+int main()
+{
+
+    welconeAndMenu();
+
+    askOrder();
+
+    return 0;
+
+}
+
+void welconeAndMenu() {
+
+    cout << endl;
+    cout << "                Sunday - Cafe & Cakes                 " << endl;
+    cout << "------------------------------------------------------" << endl;
+    cout << endl;
+    
+    cout << setw(31) << right << " Coffee " << endl;
+    cout << endl;
+    for (int i = 0; i < 5; i++) {
+        cout << "            " << i+1 << ") " << setw(20) << left << iv.coffee[i] << setw(6) << right << iv.coffeePrice[i] << endl;
+
+    }
+    cout << "\n";
+
+    cout << setw(29) << right << " Cake " << endl;
+    cout << endl;
+    for (int i = 0; i < 5; i++) {
+
+        cout << "            " << i + 1 << ") " << setw(20) << left << iv.cake[i] << setw(6) << right << iv.cakePrice[i] << endl;
+
+    }
+    cout << endl;
+    cout << "------------------------------------------------------" << endl;
+    cout << "\n";
+
+}
+
+void askOrder() {
+
+    int askOrder = 0;
+    int moreOrder = 0;
+    int askFix = 0;
+    int fixLoop = 0;
+    int order = 0;
+
+    do {
+
+        cout << "  Order ";
+        cout << "\n\n";
+        cout << " 1) Coffee " << endl;
+        cout << " 2) Cake " << endl;
+
+        cout << " > ";
+        cin >> order;
+
+        switch (order)
+        {
+
+            case 1:
+                cout << "\n";
+                orderCoffee();
+                break;
+
+            case 2:
+                cout << "\n";
+                orderCake();
+                break;
+
+            default:
+                cout << "\n";
+                cout << " Enter mentioned number only!" << endl;
+                cout << "\n\n";
+                continue;
+
+        }
+
+        cin.clear();
+        cout << endl;
+        cout << " Order or Done? ( Order = 1 / Done = others) " << endl;
+        cout << " > ";
+        cin >> moreOrder;
+        cout << endl;
+
+        if (moreOrder != 1) {
+
+            // For clear screen and show only needed.
+            system("cls");
+            welconeAndMenu();
+            cafe.showCoffeeBill();
+            cafe.showCakesBill();
+            cafe.showTotalBill();
+            
+            // Ask edit, delete or leave.
+            do {
+
+                cout << " Do more? " << endl;
+                cout << " 1) Edit Bill " << endl;
+                cout << " 2) Delete coffee or cake " << endl;
+                cout << " 3) No more. Done " << endl;
+                cout << " > ";
+                cin >> askFix;
+
+                switch (askFix) {
+
+                    case 1:
+                        cout << "\n";
+                        edit();
+                        break;
+
+                    case 2:
+                        cout << "\n";
+                        del();
+                        break;
+
+                    case 3:
+                        fixLoop++;
+                        break;
+
+                    default:
+                        system("cls");
+                        welconeAndMenu();
+                        cafe.showCoffeeBill();
+                        cafe.showCakesBill();
+                        cafe.showTotalBill();
+                        cout << "\n";
+                        cout << " Enter mentioned number only!" << endl;
+                        cout << "\n";
+                        continue;
+
+                }
+
+            } while (fixLoop < 1);
+
+            askOrder++;
+
+        }
+
+    } while (askOrder < 1);
+
+}
+
+void orderCoffee() {
+
+    system("cls");
+    welconeAndMenu();
+
+    int coffeeCode = 0;
+    int coffeeCups = 0;
+
+    cout << " Enter coffee code > ";
+    cin >> coffeeCode;
+    cout << " Enter quantity    > ";
+    cin >> coffeeCups;
+
+    cout << endl;
+    cafe.storeCoffeeCups(coffeeCode, coffeeCups);
+
+}
+
+void orderCake() {
+
+    system("cls");
+    welconeAndMenu();
+
+    int cakeCode = 0;
+    int cakeQuantity = 0;
+
+    cout << " Enter cake code > ";
+    cin >> cakeCode;
+    cout << " Enter quantity  > ";
+    cin >> cakeQuantity;
+
+    cout << endl;
+    cafe.storeCakes(cakeCode, cakeQuantity);
+
+}
+
+void edit() {
+
+    int editLoop = 0;
+    int cofeOrCake = 0;
+    int code = 0;
+    int quantity = 0;
+    bool check;
+
+    do {
+
+        system("cls");
+        welconeAndMenu();
+        cout << " Coffee - 1 (OR) Cake - 2 " << endl;
+        cout << " > ";
+        cin >> cofeOrCake;
+        cout << "\n";
+
+        switch (cofeOrCake) {
+
+            case 1:                
+                cafe.showCoffeeBill();
+                cout << " Enter code      >  ";
+                cin >> code;
+                cout << " Enter quantity  >  ";
+                cin >> quantity;
+                cout << "\n";
+
+                check = cafe.checkCoffee(code);
+                if (check) {
+
+                    cafe.editCoffee(code, quantity);
+                    system("cls");
+                    welconeAndMenu();
+                    cafe.showCoffeeBill();
+                    cafe.showCakesBill();
+                    cafe.showTotalBill();
+
+                }
+                cout << "\n";
+                break;
+
+            case 2:
+                cafe.showCakesBill();
+                cout << " Enter code      >  ";
+                cin >> code;
+                cout << " Enter quantity  >  ";
+                cin >> quantity;
+                cout << "\n";
+
+                check = cafe.checkCake(code);
+                if (check) {
+
+                    cafe.editCake(code, quantity);
+                    system("cls");
+                    welconeAndMenu();
+                    cafe.showCoffeeBill();
+                    cafe.showCakesBill();
+                    cafe.showTotalBill();
+
+                }
+                cout << "\n";
+                break;
+
+            default:
+                cout << "\n";
+                cout << " Enter mentioned number only!" << endl;
+                cout << "\n\n";
+                continue;
+
+        }
+
+        editLoop++;
+
+    } while (editLoop < 1);
+
+}
+
+void del() {
+
+    int delLoop = 0;
+    int cofeOrCake = 0;
+    int code = 0;
+    bool check;
+
+    do {
+
+        system("cls");
+        welconeAndMenu();
+        cout << " Coffee - 1 (OR) Cake - 2 " << endl;
+        cout << " > ";
+        cin >> cofeOrCake;
+        cout << "\n";
+
+        switch (cofeOrCake) {
+
+            case 1:
+                cafe.showCoffeeBill();
+                cout << " Enter code      >  ";
+                cin >> code;
+                cout << "\n";
+
+                check = cafe.checkCoffee(code);
+                if (check) {
+
+                    cafe.delCoffee(code);
+                    system("cls");
+                    welconeAndMenu();
+                    cafe.showCoffeeBill();
+                    cafe.showCakesBill();
+                    cafe.showTotalBill();
+
+                }
+                cout << "\n";
+                break;
+
+            case 2:
+                cafe.showCoffeeBill();
+                cout << " Enter code      >  ";
+                cin >> code;
+                cout << "\n";
+
+                check = cafe.checkCoffee(code);
+                if (check) {
+
+                    cafe.delCake(code);
+                    system("cls");
+                    welconeAndMenu();
+                    cafe.showCoffeeBill();
+                    cafe.showCakesBill();
+                    cafe.showTotalBill();
+
+                }
+                cout << "\n";
+                break;
+
+            default:
+                cout << "\n";
+                cout << " Enter mentioned number only!" << endl;
+                cout << "\n\n";
+                continue;
+
+        }
+
+        delLoop++;
+    
+    } while (delLoop < 1);
+
+}
