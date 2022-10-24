@@ -1,0 +1,582 @@
+#include <iostream>
+#include <fstream>
+#include <iomanip>
+#include <sstream>
+
+using namespace std;
+
+string transHistoryFile = "Transistion_History.txt";
+
+class bank {
+
+    private:
+        
+        int index = 0;
+        string username, password;
+        
+        string adminName = "admin";
+        string adminPassword = "admin";
+
+        string clientName[10], clientPassword[10];
+        int clientCashAmount[10];
+
+    public:
+
+        void checkAdmin();
+        void adminPanel();
+        void clientInfoAdmin();
+        void transHistoryAdmin();
+
+        void signUp();
+        bool checkUsername(string cUsername);
+        void storeUserInfo(string name, string password, int money);
+
+        void login();
+        int getUserIndex(string loginUsername);
+        string getUserPassword(string loginUsername);
+        void clientPanel(int accIndex);
+        void cashIn(int loginUserIndex);
+        void cashOut(int loginUserIndex);
+        void transfer(int transferFrom);
+        void storeTransHistoryClient(string uName, string toReceived, int cashAmount);
+        void storeTransHistoryAdmin(string fromUser, string toUser, int transCash);
+        void transferHistoryClient(int userIndex);
+
+        void mainMenu();
+
+};
+
+void bank::checkAdmin() {
+
+    int checkTime = 5;
+    string admin, password;
+
+    cout << " Enter Admin Name: ";
+    cin >> admin;
+    cout << " Enter Password: ";
+    cin >> password;
+    
+    int checkPassword = adminPassword.compare(password);
+
+    do {
+
+        if (checkPassword == 0) {
+
+            system("cls");
+            adminPanel();
+
+        }
+        else {
+
+            cout << "\n";
+            cout << " Wrong Passwrod. You have " << checkTime << " time left.\n";
+            cout << " Try again!\n";
+            checkTime--;
+            cout << " Enter Password : ";
+            cin >> password;
+
+        }
+
+    } while (checkTime > 0);
+
+    if (checkTime == 0) {
+
+        cout << "\n You have no time left! \n";
+
+    }
+
+}
+
+
+void bank::adminPanel() {
+
+    int func, apLoop = 0;
+
+    cout << "\n";
+    cout << " Admin Panel \n\n";
+    cout << " 1) Client's Info \n";
+    cout << " 2) Transistion History \n";
+    cout << " 3) Quit \n";
+    cout << " > ";
+    cin >> func;
+    cout << "\n";
+
+    do {
+
+        switch (func) {
+
+        case 1:
+            clientInfoAdmin();
+            break;
+
+        case 2:
+            transHistoryAdmin();
+            break;
+
+        case 3:
+            break;
+
+        default:
+            cout << "\n Plz enter the number we mentioned!" << "\n";
+            cout << " > ";
+            cin >> func;
+            continue;
+
+        }
+
+        apLoop++;
+
+
+    } while (apLoop < 1);
+
+    cin.clear();
+    system("cls");
+    mainMenu();
+
+}
+
+void bank::clientInfoAdmin() {
+
+    system("cls");
+
+    cout << "\n Clients' Info \n\n";
+    cout << " " << setw(20) << left << "Username" << "Cash Amount" << endl;
+    for (int loop = 0; loop < index; loop++) {
+
+        cout << " " << setw(20) << left << clientName[loop] << setw(10) << right << clientCashAmount[loop] << endl;
+
+    }
+
+    adminPanel();
+
+}
+
+void bank::transHistoryAdmin() {
+
+    ifstream openFile(transHistoryFile);
+
+    cout << "\n Cash Transfer History of All Clients \n\n";
+    if (openFile.is_open()) {
+
+        stringstream buffer;
+
+        buffer << openFile.rdbuf();
+
+        string fileContents = buffer.str();
+
+        cout << fileContents << "\n";
+
+    }
+    else
+    {
+        cout << " File has not been created yet (OR) Unable to open! \n";
+    }
+
+    openFile.close();
+
+    adminPanel();
+
+}
+
+void bank::signUp() {
+
+    system("cls");
+
+    bool checkName = 1;
+    int confirm = 0, signUpCashAmount;
+    string signUpUserName, signUpPasswrod, confirmPassword;
+
+    cout << "\n    Sign Up    \n\n";
+
+    while (checkName == 1) {
+
+        cout << " Enter Username : ";
+        cin >> signUpUserName;
+
+        if (checkUsername(signUpUserName)) {
+            checkName = 0;
+        }
+        else
+        {
+            cout << " Cannot use this username. Enter another.\n";
+        }
+
+    }
+
+    cout << " Enter Password : ";
+    cin >> signUpPasswrod;
+    cout << " Confirm Password : ";
+    cin >> confirmPassword;
+
+    do {
+
+        cout << "\n";
+
+        if (confirmPassword == signUpPasswrod) {
+
+            cout << " Sign Up complete.\n";
+            confirm++;
+
+        }
+        else {
+
+            cout << " Confirm password : ";
+            cin >> confirmPassword;
+
+        }
+
+    } while (confirm < 1);
+
+    cout << " Enter Cash Amount : ";
+    cin >> signUpCashAmount;
+
+    storeUserInfo(signUpUserName, signUpPasswrod, signUpCashAmount);
+
+    cout << " Your account can be used from now on.\n";
+
+    mainMenu();
+
+}
+
+bool bank::checkUsername(string cUsername) {
+
+    for (int cLoop = 0; cLoop < index; cLoop++) {
+
+        int result = cUsername.compare(clientName[cLoop]);
+
+        if (result == 0) {
+            return 0;
+        }
+        else
+        {
+            return 1;
+        }
+
+    }
+
+}
+
+void bank::storeUserInfo(string name, string password, int money) {
+
+    if (index < 10) {
+
+        clientName[index] = name;
+        clientPassword[index] = password;
+        clientCashAmount[index] = money;
+        index++;
+
+    }
+    else {
+        cout << " Database storage full!\n";
+    }
+
+}
+
+void bank::login() {
+
+    system("cls");
+
+    int checkPass = 0;
+    string loginUsername, loginPassword, checkLoginPassword;
+
+    cout << " \n Log In \n\n";
+    cout << " Enter username : ";
+    cin >> loginUsername;
+    cout << " Enter Password : ";
+    cin >> loginPassword;
+    cout << "\n";
+
+    do {
+
+        checkLoginPassword = getUserPassword(loginUsername);
+
+        if (checkLoginPassword == loginPassword) {
+            
+            int loginUserIndex = getUserIndex(loginUsername);
+            system("cls");
+            clientPanel(loginUserIndex);
+            checkPass++;
+
+        }
+        else
+        {
+
+            cout << " Wrong Password! Enter again.\n";
+            cout << " Enter Password : ";
+            cin >> loginPassword;
+            cout << "\n";
+
+        }
+
+    } while (checkPass < 1);
+
+}
+
+int bank::getUserIndex(string loginUsername) {
+
+    int userIndex = 0;
+
+    for (int uLoop = 0; uLoop < index; uLoop++) {
+
+        if (clientName[uLoop] == loginUsername) {
+            userIndex = uLoop;
+        }
+
+    }
+
+    return userIndex;
+
+}
+
+string bank::getUserPassword(string loginUsername) {
+
+    string userPassword;
+
+    int loginIndex = getUserIndex(loginUsername);
+    userPassword = clientPassword[loginIndex];
+
+    return userPassword;
+
+}
+
+void bank::clientPanel(int accIndex) {
+
+    int clientFunc, cfLoop = 0;
+
+    cout << "\n";
+    cout << " Username : " << setw(20) << left << clientName[accIndex] << " Balance : " << clientCashAmount[accIndex] << "\n\n";
+    cout << " Functions \n";
+    cout << " 1) Cash In \n";
+    cout << " 2) Cash Withdraw \n";
+    cout << " 3) Transfer Money \n";
+    cout << " 4) Transfer History \n";
+    cout << " 5) Quit \n";
+    cout << " > ";
+    cin >> clientFunc;
+
+    do {
+
+        switch (clientFunc) {
+
+        case 1:
+            cashIn(accIndex);
+            break;
+
+        case 2:
+            cashOut(accIndex);
+            break;
+
+        case 3:
+            transfer(accIndex);
+            break;
+
+        case 4:
+            transferHistoryClient(accIndex);          
+            break;
+
+        case 5:
+            cfLoop++;
+            break;
+
+        default:
+            cout << "\n Plz enter the number we mentioned!\n";
+            cout << " > ";
+            cin >> clientFunc;
+            continue;
+
+        }
+
+    } while ( cfLoop < 1 );
+
+    cin.clear();
+    system("cls");
+    mainMenu();
+
+}
+
+void bank::cashIn(int loginUserIndex) {
+
+    int moneyIn = 0;
+
+    cout << "\n Cash In \n";
+    cout << " Enter cash amount : ";
+    cin >> moneyIn;
+    cout << "\n";
+
+    clientCashAmount[loginUserIndex] += moneyIn;
+    cout << " Cash Save Complete.\n";
+
+    clientPanel(loginUserIndex);
+
+}
+
+void bank::cashOut(int loginUserIndex) {
+
+    int moneyOut = 0;
+
+    cout << "\n Cash Withdraw\n";
+    cout << " Enter withdraw amount : ";
+    cin >> moneyOut;
+    cout << "\n";
+
+    clientCashAmount[loginUserIndex] -= moneyOut;
+    cout << " Cash Withdraw Complete.\n";
+
+    clientPanel(loginUserIndex);
+
+}
+
+void bank::transfer(int transferFrom) {
+
+    string transTo;
+    int transMoney, transToIndex;
+
+    cout << "\n Money Transfer \n";
+    cout << " Enter Username to transfer : ";
+    cin >> transTo;
+    transToIndex = getUserIndex(transTo);
+    cout << " Enter Cash Amount to transfer : ";
+    cin >> transMoney;
+
+    clientCashAmount[transToIndex] += transMoney;
+    clientCashAmount[transferFrom] -= transMoney;
+
+    string transFrom = clientName[transferFrom];
+
+    storeTransHistoryClient(transFrom, transTo, transMoney);
+    storeTransHistoryAdmin(transFrom, transTo, transMoney);
+    cout << " Cash Transfer Complete!\n";
+    
+    clientPanel(transferFrom);
+
+}
+
+void bank::storeTransHistoryClient(string uNameForFile, string receiver, int cashAmount) {
+
+    string fileNameForStore = uNameForFile + ".txt";
+
+    ofstream writeToStoreClient(fileNameForStore, ios::app);
+
+    if (writeToStoreClient.is_open()) {
+
+        writeToStoreClient << "To " << receiver << " -> Cash Amount: " << cashAmount << "\n";
+
+    }
+    else
+    {
+        cout << " File has not been created yet (OR) Unable to open! \n";
+    }
+
+    writeToStoreClient.close();
+
+}
+
+void bank::storeTransHistoryAdmin(string fromUser, string toUser, int transCash) {
+
+    ofstream writeFile(transHistoryFile, ios::app);
+
+    if (writeFile.is_open()) {
+        
+        writeFile << "From " << fromUser << " to " << toUser << " -> Transfer Amount: " << transCash << "\n";
+
+    }
+    else
+    {
+        cout << " File has not been created yet (OR) Unable to open! \n";
+    }
+
+    writeFile.close();
+
+}
+
+void bank::transferHistoryClient(int userIndex) {
+
+    string fileNameToShow = clientName[userIndex] + ".txt";
+
+    ifstream fileOfTransHistory(fileNameToShow);
+    string transHistory;
+
+    cout << " Transfer History \n\n";
+
+    if (fileOfTransHistory.is_open()) {
+
+        stringstream buffer;
+
+        buffer << fileOfTransHistory.rdbuf();
+        
+        string fileContents = buffer.str();
+
+        cout << fileContents << "\n";
+
+    }
+    else
+    {
+        cout << " File has not been created yet (OR) Unable to open! \n";
+    }
+
+    fileOfTransHistory.close();
+
+    clientPanel(userIndex);
+
+}
+
+void bank::mainMenu() {
+
+    cin.clear();
+
+    int function;
+    int loop = 0;
+    
+    cout << "\n Main Menu \n\n";
+    cout << " 1) Admin Panel \n";
+    cout << " 2) Sign Up \n";
+    cout << " 3) Login \n";
+    cout << " 4) Quit \n";
+    cout << " > ";
+    cin >> function;
+
+    while (loop < 1){
+
+        cout << "\n";
+
+        switch (function)
+        {
+
+        case 1:
+            checkAdmin();
+            break;
+
+        case 2:
+            signUp();
+            break;
+
+        case 3:
+            login();
+            break;
+
+        case 4:
+            break;
+
+        default:
+            cout << " Plz enter the number we mentioned!" << "\n";
+            cout << " > ";
+            cin >> function;
+            continue;
+
+        }
+
+        loop++;
+
+    }
+
+}
+
+int main()
+{
+    
+    bank bank;
+    bank.mainMenu();
+
+    return 0;
+
+}
