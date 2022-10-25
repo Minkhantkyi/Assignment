@@ -1,47 +1,75 @@
 #include <iostream>
 #include <fstream>
 #include <iomanip>
+#include <ctime>
 #include <sstream>
 
 using namespace std;
 
+// Tansfer History File for Admin View
 string transHistoryFile = "Transistion_History.txt";
 
 class bank {
 
     private:
         
+        // I use array for client's signup, so for login, use index to check whether signup or not.
         int index = 0;
         string username, password;
         
+        // Set admin and password from the beginning.
         string adminName = "admin";
         string adminPassword = "admin";
 
+        // To store client's info and cash 
         string clientName[10], clientPassword[10];
         int clientCashAmount[10];
 
     public:
 
+        // For admin login
         void checkAdmin();
+
+        // For admin panel and functions
         void adminPanel();
         void clientInfoAdmin();
         void transHistoryAdmin();
 
+        // For client signup
         void signUp();
+
+        // Check client has been registered or not for login
         bool checkUsername(string cUsername);
+
+        // Store user input register info to arrays.
         void storeUserInfo(string name, string password, int money);
 
+        // User login
         void login();
+
+        // Retrieve user's index from array 
         int getUserIndex(string loginUsername);
+
+        // Retrieve user's password from array
         string getUserPassword(string loginUsername);
+
+        // Client's panel and functions
         void clientPanel(int accIndex);
         void cashIn(int loginUserIndex);
         void cashOut(int loginUserIndex);
         void transfer(int transferFrom);
+
+        // Store cash transfer history for client and admin in each seperated file.
         void storeTransHistoryClient(string uName, string toReceived, int cashAmount);
         void storeTransHistoryAdmin(string fromUser, string toUser, int transCash);
+        
+        // Transfer History of login client
         void transferHistoryClient(int userIndex);
 
+        // Get time from os for transfer rrecord
+        string getTime();
+
+        // Main menu for admin and clients both
         void mainMenu();
 
 };
@@ -56,6 +84,7 @@ void bank::checkAdmin() {
     cout << " Enter Password: ";
     cin >> password;
     
+    // Check admin password and give 5 times try.
     int checkPassword = adminPassword.compare(password);
 
     do {
@@ -130,32 +159,40 @@ void bank::adminPanel() {
     } while (apLoop < 1);
 
     cin.clear();
+
+    // Get back to main menu when quit
     system("cls");
     mainMenu();
 
 }
 
+// Retrieve clients' info from array
 void bank::clientInfoAdmin() {
 
     system("cls");
 
     cout << "\n Clients' Info \n\n";
     cout << " " << setw(20) << left << "Username" << "Cash Amount" << endl;
+
     for (int loop = 0; loop < index; loop++) {
 
         cout << " " << setw(20) << left << clientName[loop] << setw(10) << right << clientCashAmount[loop] << endl;
 
     }
 
+    // Show admin's functions to choose again
     adminPanel();
 
 }
 
+
+// Retrieve clients' transfer records for admin
 void bank::transHistoryAdmin() {
 
     ifstream openFile(transHistoryFile);
 
     cout << "\n Cash Transfer History of All Clients \n\n";
+
     if (openFile.is_open()) {
 
         stringstream buffer;
@@ -164,16 +201,17 @@ void bank::transHistoryAdmin() {
 
         string fileContents = buffer.str();
 
-        cout << fileContents << "\n";
+        cout << fileContents << "\n\n";
 
     }
     else
     {
-        cout << " File has not been created yet (OR) Unable to open! \n";
+        cout << " There is no transfer record. \n";
     }
 
     openFile.close();
 
+    // Show admin's functions to choose again
     adminPanel();
 
 }
@@ -188,6 +226,7 @@ void bank::signUp() {
 
     cout << "\n    Sign Up    \n\n";
 
+    // check user's input name is already registered or not
     while (checkName == 1) {
 
         cout << " Enter Username : ";
@@ -230,6 +269,7 @@ void bank::signUp() {
     cout << " Enter Cash Amount : ";
     cin >> signUpCashAmount;
 
+    // Store user input username, password and cash amount to array that is stored data for login
     storeUserInfo(signUpUserName, signUpPasswrod, signUpCashAmount);
 
     cout << " Your account can be used from now on.\n";
@@ -290,6 +330,7 @@ void bank::login() {
 
         checkLoginPassword = getUserPassword(loginUsername);
 
+        // check user's input password and let in to the client panel.
         if (checkLoginPassword == loginPassword) {
             
             int loginUserIndex = getUserIndex(loginUsername);
@@ -389,11 +430,14 @@ void bank::clientPanel(int accIndex) {
     } while ( cfLoop < 1 );
 
     cin.clear();
+
+    // Get back to main menu when quit
     system("cls");
     mainMenu();
 
 }
 
+// cash store in user's account(array)
 void bank::cashIn(int loginUserIndex) {
 
     int moneyIn = 0;
@@ -406,10 +450,12 @@ void bank::cashIn(int loginUserIndex) {
     clientCashAmount[loginUserIndex] += moneyIn;
     cout << " Cash Save Complete.\n";
 
+    // Get back to client panel for functions again
     clientPanel(loginUserIndex);
 
 }
 
+// cash withdraw from user's account(array)
 void bank::cashOut(int loginUserIndex) {
 
     int moneyOut = 0;
@@ -422,10 +468,12 @@ void bank::cashOut(int loginUserIndex) {
     clientCashAmount[loginUserIndex] -= moneyOut;
     cout << " Cash Withdraw Complete.\n";
 
+    // Get back to client panel for functions again
     clientPanel(loginUserIndex);
 
 }
 
+// Transfer cash from one user to another
 void bank::transfer(int transferFrom) {
 
     string transTo;
@@ -438,32 +486,40 @@ void bank::transfer(int transferFrom) {
     cout << " Enter Cash Amount to transfer : ";
     cin >> transMoney;
 
+    // Cash store in received user's account and reduce cash amount from transfer user's account
     clientCashAmount[transToIndex] += transMoney;
     clientCashAmount[transferFrom] -= transMoney;
 
     string transFrom = clientName[transferFrom];
 
+    // Store transfer record for client and admin both
     storeTransHistoryClient(transFrom, transTo, transMoney);
     storeTransHistoryAdmin(transFrom, transTo, transMoney);
     cout << " Cash Transfer Complete!\n";
     
+    // Get back to client panel for functions again
     clientPanel(transferFrom);
 
 }
 
 void bank::storeTransHistoryClient(string uNameForFile, string receiver, int cashAmount) {
 
+    // Create file and name it by user's name
     string fileNameForStore = uNameForFile + ".txt";
 
+    // Open file and append record data to it
     ofstream writeToStoreClient(fileNameForStore, ios::app);
+
+    string currentTime = getTime();
 
     if (writeToStoreClient.is_open()) {
 
-        writeToStoreClient << "To " << receiver << " -> Cash Amount: " << cashAmount << "\n";
+        writeToStoreClient << "To " << receiver << " -> Cash Amount: " << cashAmount << setw(30) << right << currentTime << "\n";
 
     }
     else
     {
+        // If user has no transfer record
         cout << " File has not been created yet (OR) Unable to open! \n";
     }
 
@@ -475,9 +531,12 @@ void bank::storeTransHistoryAdmin(string fromUser, string toUser, int transCash)
 
     ofstream writeFile(transHistoryFile, ios::app);
 
+    string currentTime = getTime();
+
     if (writeFile.is_open()) {
         
-        writeFile << "From " << fromUser << " to " << toUser << " -> Transfer Amount: " << transCash << "\n";
+        writeFile << "From " << fromUser << " to " << toUser << " -> Transfer Amount: " << transCash 
+            << setw(30) << right << currentTime << "\n";
 
     }
     else
@@ -506,17 +565,37 @@ void bank::transferHistoryClient(int userIndex) {
         
         string fileContents = buffer.str();
 
-        cout << fileContents << "\n";
+        cout << fileContents << "\n\n";
 
     }
     else
     {
-        cout << " File has not been created yet (OR) Unable to open! \n";
+        cout << " There is no transfer record. \n";
     }
 
     fileOfTransHistory.close();
 
     clientPanel(userIndex);
+
+}
+
+string bank::getTime() {
+
+    string currentTime;
+    time_t now = time(NULL);
+
+    /*
+        In VS Code, it sometimes show unsafe warning when using ctime library's functions.
+        Write _CRT_SECURE_NO_WARNINGS in project> cpp name + Properties > C/C++ > Preprocessor > Processor Definitions box. 
+    */ 
+    
+    struct tm* lTime = localtime(&now);
+
+    char timeData[200];
+    strftime(timeData, 200, "%a %d %b %Y %X %p", lTime);
+    currentTime = timeData;
+
+    return currentTime;
 
 }
 
