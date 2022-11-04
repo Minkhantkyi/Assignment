@@ -1,12 +1,9 @@
-// File IO with OOP.cpp 
+// FIle IO with OOP.cpp 
 
 #include <iostream>
 #include <fstream>
 #include <string>
-#include <string.h>
 #include <iomanip>
-#include <vector>
-#include <stdio.h>
 #include <conio.h>
 
 using namespace std;
@@ -95,16 +92,13 @@ void Info::showAllData() {
     if (readForLines.is_open()) {
 
         string line;
-        vector<string> totalLines;
 
         while (!readForLines.eof()) {
 
             getline(readForLines, line);
-            totalLines.push_back(line);
+            tLines++;
 
         }
-
-        tLines = totalLines.size();
 
     }
 
