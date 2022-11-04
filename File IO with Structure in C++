@@ -203,7 +203,7 @@ void updateInfo(int tLines) {
 
         int i = 0;
 
-        while (i < tLines) {
+        while (i < tLines - 1 ) {
 
             readAllData >> idRead >> usernameRead >> passwordRead >> amountRead >> ageRead >> locationRead;
             info[i].id = idRead;
@@ -261,7 +261,7 @@ void updateInfo(int tLines) {
 
         if (updateInfo.is_open()) {
 
-            for (int i = 0; i < tLines; i++) {
+            for (int i = 0; i < tLines - 1; i++) {
 
                 updateInfo << setw(6) << left << info[i].id << setw(20) << left << info[i].username
                     << setw(15) << left << info[i].password << setw(12) << right << info[i].amount << "  "
